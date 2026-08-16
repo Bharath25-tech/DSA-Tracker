@@ -1,0 +1,29 @@
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: crux
+      POSTGRES_USER: crux
+      POSTGRES_PASSWORD: crux
+    volumes:
+      - crux_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U crux -d crux"]
+      interval: 3s
+      timeout: 3s
+      retries: 10
+
+  web:
+    build: ./backend
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    environment:
+      DATABASE_URL: postgresql://crux:crux@db:5432/crux
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  crux_pgdata:

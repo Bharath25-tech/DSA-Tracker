@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Crux — DSA Ascent Log</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,500;0,600;1,500&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <span class="brand-mark">▲</span>
+    <div class="brand-text">
+      <h1>Crux</h1>
+      <p>the hardest move is the one you haven't tried yet</p>
+    </div>
+  </div>
+  <div class="overall-block">
+    <div class="overall-ridge" id="overallRidge"></div>
+    <div class="overall-num">
+      <span id="overallDone">0</span><span class="slash">/</span><span id="overallTotal">0</span>
+      <span class="overall-lbl">pitches climbed</span>
+    </div>
+  </div>
+</header>
+
+<div class="layout">
+  <aside class="sidebar">
+    <div class="sidebar-label">Routes</div>
+    <div id="topicList"></div>
+    <button class="add-route-btn" id="addTopicBtn">+ New route</button>
+  </aside>
+
+  <main>
+    <div class="route-header">
+      <div>
+        <h2 id="topicTitle">—</h2>
+        <div class="route-sub" id="topicSub"></div>
+      </div>
+      <div class="route-frac" id="topicFrac">0/0</div>
+    </div>
+
+    <div class="route-ridge" id="topicRidge"></div>
+
+    <div class="toolbar">
+      <input class="search-input" id="searchInput" placeholder="Search this route…">
+      <div class="filter-btns">
+        <button class="filter-btn active" data-filter="all">All</button>
+        <button class="filter-btn" data-filter="done">Climbed</button>
+        <button class="filter-btn" data-filter="pending">Left</button>
+      </div>
+    </div>
+
+    <div class="pitch-list" id="pitchList"></div>
+
+    <form class="add-pitch-form" id="addPitchForm">
+      <input class="p-name" id="pNameInput" placeholder="Pitch name (e.g. Two Sum)" required>
+      <input class="p-num" id="pNumInput" placeholder="LC #">
+      <select class="p-diff" id="pDiffInput">
+        <option value="">Grade</option>
+        <option value="Easy">Easy</option>
+        <option value="Medium">Medium</option>
+        <option value="Hard">Hard</option>
+      </select>
+      <input class="p-link" id="pLinkInput" placeholder="Link (optional)">
+      <button type="submit">+ Log pitch</button>
+    </form>
+  </main>
+</div>
+
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <h3>New route</h3>
+    <input id="newTopicInput" placeholder="e.g. Linked Lists, Trees, DP…" maxlength="40">
+    <div class="modal-actions">
+      <button id="modalCancel">Cancel</button>
+      <button class="primary" id="modalCreate">Start route</button>
+    </div>
+  </div>
+</div>
+
+<div class="status-note" id="statusNote">Saved</div>
+
+<script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>
