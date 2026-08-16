@@ -458,15 +458,37 @@
   }
 
   async function loadState(){
+    const INIT_FLAG = STORAGE_KEY + '-initialized';
+
+    // Try to read existing saved progress.
     try{
       const res = await window.storage.get(STORAGE_KEY, false);
       if(res && res.value){
         state = JSON.parse(res.value);
         return;
       }
-    }catch(e){ /* key doesn't exist yet */ }
+    }catch(e){
+      // get() throws both when the key truly doesn't exist yet AND on transient
+      // errors. Before treating this as "no data", check whether we've ever
+      // successfully initialized before — if so, this is a transient failure,
+      // not an empty store, and we must NOT overwrite real saved progress.
+      try{
+        const flag = await window.storage.get(INIT_FLAG, false);
+        if(flag && flag.value === 'true'){
+          console.error('Could not load saved progress (transient error). Not reseeding.', e);
+          showStatus('Could not load saved progress — try refreshing');
+          state = buildSeed(); // used only in-memory so the UI isn't blank
+          return;
+        }
+      }catch(e2){
+        // INIT_FLAG also missing/unreadable -> genuinely first run.
+      }
+    }
+
+    // Genuinely first run: seed defaults and mark as initialized.
     state = buildSeed();
     await saveState(true);
+    try{ await window.storage.set(INIT_FLAG, 'true', false); }catch(e3){ /* non-fatal */ }
   }
 
   async function saveState(silent){
@@ -577,9 +599,9 @@
         <button class="q-note-btn${q.notes ? ' has-note' : ''}" title="Notes"><span class="dot"></span>Notes</button>
       `;
       row.querySelector('.q-text').textContent = q.name;
-      row.querySelector('.q-check').addEventListener('click', () => {
+      row.querySelector('.q-check').addEventListener('click', async () => {
         q.done = !q.done;
-        saveState();
+        await saveState();
         renderAll();
       });
 
